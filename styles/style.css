@@ -1,3 +1,16 @@
+body .centeredFlex {
+  display: flex;
+  justify-content: center;
+  vertical-align: auto;
+}
+body #imgLogo {
+  width: auto;
+  height: 150px;
+}
+body #myBooks .centered {
+  margin: 0 auto;
+}
+
 #myBooks {
   color: blue;
 }
