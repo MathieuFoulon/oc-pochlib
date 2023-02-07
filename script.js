@@ -7,9 +7,10 @@ const app = {
 
     // function launched first ( see last line of the code )
     init: function () {
-        let divBeforeHrElement = document.createElement("div");
+        const divBeforeHrElement = document.createElement("div");
         app.hrElement.before(divBeforeHrElement);
         divBeforeHrElement.setAttribute("id", "globalDiv");
+        app.createBookmarkedDivContainerElement()
         app.createAndPlaceAddBookButton();
         
     },
@@ -22,44 +23,91 @@ const app = {
         globalDiv.appendChild(addBookButtonElement)
         addBookButtonElement.addEventListener("click", app.addBook);
     },
+
+    createBookmarkedDivContainerElement: function(){
+        const bookmarkedDivContainerElement = document.createElement("div")
+        bookmarkedDivContainerElement.classList.add("container");
+        bookmarkedDivContainerElement.setAttribute("id", "bookmarked")
+
+        app.contentElement.appendChild(bookmarkedDivContainerElement)
+        app.getBookmarkedBooks()
+    },
+
+    getBookmarkedBooks: function(){
+        
+        const bookmarkedDivContainerElement = document.querySelector("#bookmarked");
+        if ( document.querySelectorAll(".pochListBooks")){
+            bookmarkedDivContainerElement.innerHTML = "";
+        }
+        for (let i = 0; i < sessionStorage.length; i++) {
+
+                const value = sessionStorage.getItem(sessionStorage.key(i));
+                const bookId = sessionStorage.key(i);
+
+                if (bookId != "IsThisFirstTime_Log_From_LiveServer") {
+                    // const dummyDivElement = document.createElement("div");
+                    // dummyDivElement.innerHTML = value;
+                    // bookmarkedDivContainerElement.appendChild(dummyDivElement);
+                    const articleAndTrashContainerElement= document.createElement("div");
+                    articleAndTrashContainerElement.classList.add("pochlistBooks")
+                    articleAndTrashContainerElement.setAttribute("id", bookId);
+                    articleAndTrashContainerElement.innerHTML = value;
+                    bookmarkedDivContainerElement.appendChild(articleAndTrashContainerElement);
+
+                    
+                    const bookmarkIconElement = bookmarkedDivContainerElement.querySelector(".fa-bookmark");
+                    bookmarkIconElement.className = "fas fa-trash";
+
+                    
+                    bookmarkIconElement.addEventListener("click", function() {
+                        sessionStorage.removeItem(bookId);
+                        console.log("click")
+                        articleAndTrashContainerElement.parentElement.removeChild(articleAndTrashContainerElement);
+                    })
+                }
+        }
+    },
+
     // makes the button to disappear and show form
     addBook: function (evt) {
         console.log("bouton Ajouter un livre cliqué");
-        let buttonElement = evt.currentTarget;
-        buttonElement.style.display = "none";
+        const globalDiv = document.querySelector("#globalDiv");
+        globalDiv.removeChild(evt.currentTarget)
         app.createForm();
     },
 
     createForm: function () {
-        let divGroupElement = document.createElement("div");
+        const globalDiv = document.querySelector("#globalDiv");
+        const divGroupElement = document.createElement("div");
         divGroupElement.classList.add("container");
         divGroupElement.setAttribute("id", "container");
 
-        let formElement = document.createElement("form");
+        const formElement = document.createElement("form");
         formElement.classList.add("form");
         formElement.setAttribute("id", "form")
 
-        let subDivTitleElement = document.createElement("div");
-        let subDivAuthorElement = document.createElement("div");
+        const subDivTitleElement = document.createElement("div");
+        const subDivAuthorElement = document.createElement("div");
 
-        let labelBookTitleElement = document.createElement("label");
+        const labelBookTitleElement = document.createElement("label");
         labelBookTitleElement.innerText = "Titre du livre";
-        let inputBookTitleElement = document.createElement("input");
+        const inputBookTitleElement = document.createElement("input");
         inputBookTitleElement.type = "text";
         inputBookTitleElement.setAttribute("id", "titleInput");
 
-        let labelBookAuthorElement = document.createElement("label");
+        const labelBookAuthorElement = document.createElement("label");
         labelBookAuthorElement.innerText = "Auteur";
-        let inputBookAuthorElement = document.createElement("input");
+        const inputBookAuthorElement = document.createElement("input");
         inputBookAuthorElement.type = "text";
         inputBookAuthorElement.setAttribute("id", "authorInput");
 
-        let buttonSubmitElement = document.createElement("button");
+        const buttonSubmitElement = document.createElement("button");
         buttonSubmitElement.type = "submit";
         buttonSubmitElement.textContent = "Rechercher";
 
-        let buttonCancelElement = document.createElement("button")
-        buttonCancelElement.addEventListener("click", app.removeForm)
+        const buttonCancelElement = document.createElement("button");
+        buttonCancelElement.textContent = "Annuler";
+        buttonCancelElement.addEventListener("click", app.removeForm);
 
         subDivTitleElement.appendChild(labelBookTitleElement);
         subDivTitleElement.appendChild(inputBookTitleElement);
@@ -69,52 +117,67 @@ const app = {
         formElement.appendChild(subDivTitleElement);
         formElement.appendChild(subDivAuthorElement);
         formElement.appendChild(buttonSubmitElement);
+        formElement.appendChild(buttonCancelElement);
+
+        formElement.addEventListener("submit", app.searchBook);
 
         divGroupElement.appendChild(formElement);
 
-        app.hrElement.before(divGroupElement);
+        globalDiv.appendChild(divGroupElement)
 
-        formElement.addEventListener("submit", app.searchBook);
+        
     },
 
     removeForm: function(evt){
         const divGroupElement = document.querySelector("#container");
         const parentDiv = divGroupElement.parentElement;
         parentDiv.removeChild(divGroupElement);
+        app.createAndPlaceAddBookButton()
     },
 
     searchBook: function (evt) {
         evt.preventDefault();
+        const resultDivElement = document.querySelector("#results") ? document.querySelector("#results").remove() : document.querySelector("#results");
         console.log("form submitted");
-        let formElement = evt.currentTarget;
-        //important part : the encoreURIComponent will convert the "firstname lastname" to "firstname%20lastname", usefull to write the uri for request
-        let titleInputValue = encodeURIComponent(
+        const formElement = evt.currentTarget;
+        //important part : the encodeURIComponent will convert the "firstname lastname" to "firstname%20lastname", usefull to write the uri for request
+        const titleInputValue = encodeURIComponent(
             formElement.querySelector("#titleInput").value
         );
-        let authorInputValue = encodeURIComponent(
+        const authorInputValue = encodeURIComponent(
             formElement.querySelector("#authorInput").value
         );
 
-        console.log(titleInputValue + " " + authorInputValue);
+        let request;
         // "https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes&key=yourAPIKey"
-        let request =
-            app.apiGoogleBooks +
-            "volumes?q=" +
-            titleInputValue +
-            "+inauthor:" +
-            authorInputValue +
-            "&key=" +
-            app.apiKey;
-        const httpHeaders = new Headers();
-        httpHeaders.append("Content-Type", "application/json");
-        const fetchOptions = {
-            method: "GET",
-            mode: "cors",
-            cache: "no-cache",
-            headers: httpHeaders,
-        };
+        if( titleInputValue !== "" && authorInputValue !== ""){
+            request =
+                app.apiGoogleBooks +
+                "volumes?q=intitle:" +
+                titleInputValue +
+                "+inauthor:" +
+                authorInputValue +
+                "&key=" +
+                app.apiKey;
+        } else if (titleInputValue !== "" && authorInputValue === ""){
+            request = app.apiGoogleBooks +
+                "volumes?q=intitle:" +
+                titleInputValue +
+                "&key=" +
+                app.apiKey;
+        } else if (titleInputValue === "" && authorInputValue !== ""){
+            request = app.apiGoogleBooks +
+                "volumes?q=inauthor:" +
+                authorInputValue +
+                "&key=" +
+                app.apiKey;
+        } else {
+            return;
+        }
+        
+        
 
-        fetch(request, fetchOptions)
+        fetch(request)
             .then(function (response) {
                 return response.json();
             })
@@ -124,11 +187,18 @@ const app = {
                 if (bookArray !== false){
                     books = app.showBookList(bookArray);
                     const divGroupElement = document.querySelector("#container");
-                    let form = document.querySelector("form");
-                    divGroupElement.removeChild(form)
+                    const h3ErrorElement = document.querySelector("#errorH3") ? divGroupElement.removeChild(document.querySelector("#errorH3")) : null;
                     divGroupElement.appendChild(books);
                     
+                    
 
+                } else {
+                    const divGroupElement = document.querySelector("#container");
+                    const h3ErrorElement = document.createElement("h3");
+                    h3ErrorElement.setAttribute("id", "errorH3");
+                    h3ErrorElement.textContent = "Aucun livre n'a été trouvé";
+                    const books = document.querySelector("#results") ? divGroupElement.removeChild(document.querySelector("#results")) : null;
+                    divGroupElement.appendChild(h3ErrorElement);
                 }
             })
             // .catch(function () {
@@ -150,7 +220,6 @@ const app = {
                 const image = book.volumeInfo.imageLinks
                     ? book.volumeInfo.imageLinks.thumbnail
                     : "./images/unavailable.png";
-                console.log(id, title, author, description, image);
                 bookArray.push({id, title, author,description,image})
             });
             console.log(bookArray);
@@ -165,7 +234,15 @@ const app = {
         const resultDivElement = document.createElement("div");
         resultDivElement.setAttribute("id", "results")
         bookArray.forEach( book => {
+
+            //container for book info and bookmark
+            const divArticleAndBookmarkElement = document.createElement("div");
+            divArticleAndBookmarkElement.classList.add("articleAndBookmark");
+            divArticleAndBookmarkElement.setAttribute("id", book.id)
+
+            //container of book info
             const divArticleElement = document.createElement("div");
+            divArticleElement.classList.add("articleBook");
 
             const titleH3Element = document.createElement("h3");
             titleH3Element.textContent = "Titre : " + book.title;
@@ -190,12 +267,55 @@ const app = {
             divArticleElement.appendChild(descriptionPElement)
             divArticleElement.appendChild(imageDivElement)
 
-            resultDivElement.appendChild(divArticleElement)
+            // container of bookmark
+            const bookmarkDivElement = document.createElement("div");
+            bookmarkDivElement.classList.add("divBookmark");
+
+            const bookmarkIconElement = document.createElement("i");
+            bookmarkIconElement.classList.add("fas","fa-bookmark");
+            bookmarkIconElement.setAttribute("book", book.id);
+            bookmarkIconElement.addEventListener("click", app.addBookmarkedBookToPochliste)
+
+            bookmarkDivElement.appendChild(bookmarkIconElement);
+
+
+            divArticleAndBookmarkElement.appendChild(divArticleElement);
+            divArticleAndBookmarkElement.appendChild(bookmarkDivElement);
+
+            resultDivElement.appendChild(divArticleAndBookmarkElement);
 
 
         })
         return resultDivElement;
-    }
+    },
+
+    addBookmarkedBookToPochliste: function(evt){
+        console.log("bookmark clické");
+        const bookmarkIconElement = evt.target;
+        
+        const bookmarkIconAttributes = bookmarkIconElement.attributes;
+        let bookId;
+        Array.prototype.slice.call(bookmarkIconAttributes).forEach(function(item) {
+            console.log(item.name + ': '+ item.value);
+            if (item.name === "book"){
+                bookId = item.value;
+            }
+        });
+
+        if (sessionStorage.getItem(bookId)) {
+            alert("Vous ne pouvez ajouter deux fois le même livre.");
+            return;
+        }
+
+
+        const dummyDivElement = document.createElement("div");
+        dummyDivElement.innerHTML = evt.target.parentElement.parentElement.innerHTML;
+
+
+        sessionStorage.setItem(bookId, dummyDivElement.innerHTML);
+        app.getBookmarkedBooks();
+    },
+
 
 
 };
