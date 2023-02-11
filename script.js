@@ -7,7 +7,7 @@ const app = {
 
     // function launched first ( see last line of the code )
     init: function () {
-        const divBeforeHrElement = document.createElement("div");
+        const divBeforeHrElement = document.createElement("section");
         app.hrElement.before(divBeforeHrElement);
         divBeforeHrElement.setAttribute("id", "globalDiv");
         app.createBookmarkedDivContainerElement()
@@ -25,7 +25,7 @@ const app = {
     },
 
     createBookmarkedDivContainerElement: function(){
-        const bookmarkedDivContainerElement = document.createElement("div")
+        const bookmarkedDivContainerElement = document.createElement("section")
         bookmarkedDivContainerElement.classList.add("container");
         bookmarkedDivContainerElement.setAttribute("id", "bookmarked")
 
@@ -48,7 +48,7 @@ const app = {
                     // const dummyDivElement = document.createElement("div");
                     // dummyDivElement.innerHTML = value;
                     // bookmarkedDivContainerElement.appendChild(dummyDivElement);
-                    const articleAndTrashContainerElement= document.createElement("div");
+                    const articleAndTrashContainerElement= document.createElement("article");
                     articleAndTrashContainerElement.classList.add("pochlistBooks")
                     articleAndTrashContainerElement.setAttribute("id", bookId);
                     articleAndTrashContainerElement.innerHTML = value;
@@ -83,7 +83,7 @@ const app = {
         divGroupElement.setAttribute("id", "container");
 
         const formElement = document.createElement("form");
-        formElement.classList.add("form");
+        formElement.classList.add("form", "container");
         formElement.setAttribute("id", "form")
 
         const subDivTitleElement = document.createElement("div");
@@ -106,6 +106,7 @@ const app = {
         buttonSubmitElement.textContent = "Rechercher";
 
         const buttonCancelElement = document.createElement("button");
+        buttonCancelElement.className = "red"
         buttonCancelElement.textContent = "Annuler";
         buttonCancelElement.addEventListener("click", app.removeForm);
 
@@ -241,7 +242,7 @@ const app = {
             divArticleAndBookmarkElement.setAttribute("id", book.id)
 
             //container of book info
-            const divArticleElement = document.createElement("div");
+            const divArticleElement = document.createElement("article");
             divArticleElement.classList.add("articleBook");
 
             const titleH3Element = document.createElement("h3");

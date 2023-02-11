@@ -1,22 +1,202 @@
+$turquoise: #22b1a3;
+$red: #f53526;
+$darkgrey: #797979;
+$cream: rgb(231, 240, 229);
+$lightgrey: rgb(244, 245, 244);
+
+
+$desktop: 1440px;
+$tablet: 768px;
+$mobile: 425px;
+
+
 body {
-    .centeredFlex {
+    
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: bolder;
+
+    hr {
+        margin: 30px;
+    }
+
+    button {
+        font-weight: bold;
+        font-size: 1rem;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px 10px 20px;
+        margin: 2px;
+        cursor: pointer;
+    }
+
+    button:hover{
+        scale: 1.05;
+    }
+
+    .container {
+        padding: 20px;
+        padding-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid $darkgrey;
+        background: $cream;
+        color: black;
+        position: relative;
+    }
+
+    #results, #bookmarked {
+        width: 100%;
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
-        vertical-align: auto
     }
-    #imgLogo {
-        width: auto;
-        height: 150px;
-    }
-    #myBooks{
-        .centered {
-            margin: 0 auto;
+
+    .articleAndBookmark, .pochlistBooks {
+        flex-grow: 1;
+        display: flex;
+        padding: 20px;
+        padding-bottom: 30px;
+        border-radius: 5px;
+        border: 1px solid $darkgrey;
+        margin: 10px;
+        background: $lightgrey;
+        position: relative;
+
+        h3:first-child {
+            text-decoration: underline;     
+        }
+
+        h3:nth-child(0n+2){
+            margin: 10px 0px;
+            font-style: italic;
+        }
+
+        h3:nth-child(0n+3){
+            margin: 10px 0px;
         }
     }
+
     
-    
+    #content {
+        width: 100%;
+        margin-top: 30px;
+        
+    }
+
+    #divLogo {
+        #imgLogo {
+            img {
+                width: auto;
+                height: 200px;
+                display: flex;
+                margin: 0 auto;
+                border-radius: 5%;
+            }
+        }
+    }
+
+    #myBooks {
+        margin: 10px;
+        h1 {
+            text-align: center;
+            border: 1px solid black;
+            padding: 20px;
+            
+            box-shadow: 0px 7px 15px 0px #797979;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            text-decoration: underline;;
+        }
+        #globalDiv {
+            display: flex;
+            justify-content: space-around;
+            button {
+                margin: 30px;
+                background-color: $turquoise;
+            }
+            #container {
+                #errorH3 {
+                    margin-top: 30px;
+                    text-align: center;
+                    color: $red;
+                }
+                form {
+                    padding: 20px;
+                    padding-bottom: 20px;
+                    border-radius: 5px;
+                    border: 1px solid $darkgrey;
+                    color: black;
+                    background: #fff;
+                    position: relative;
+                    margin-top: 10px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+
+                    div {
+                        width: 100%;
+                        margin: 10px;
+                        label {
+                            margin: 15px;
+                            font-size: 1.2em;
+                        }
+
+                        input[type="text"] {
+                            height: 35px;
+                            width: 100%;
+                            border: 1px $darkgrey solid;
+                            border-radius: 2px;
+                            margin: 2px;
+                            &:focus, &:hover {
+                                background-color: $lightgrey;
+                            }
+                        }
+                    }
+
+                    .red {
+                        background: $red;
+                    }
+                }
+            }
+        }
+    }
+
+    .fa-bookmark {
+        color: $turquoise;
+        cursor: pointer;
+    }
+
+    .fa-trash {
+        color: $red;
+        cursor: pointer;
+    }
+
+    img {
+        height: 200px;
+        display: flex;
+        margin: 10px auto;
+        border-radius: 5%;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    @media only screen and (min-width: $tablet) and (max-width: $desktop) {
+        .articleAndBookmark,
+        .pochlistBooks {
+            width: 44%;
+        }
+    }
+
+    @media only screen and (min-width: $desktop) {
+        .articleAndBookmark,
+        .pochlistBooks {
+            width: 30%;
+        }
+    }
 }
 
-#myBooks {
-    color: blue;
-}
