@@ -184,27 +184,27 @@ const app = {
             })
             .then(function (data) {
                 console.log(data);
-                bookArray = app.formatBookList(data);
+                const bookArray = app.formatBookList(data);
                 if (bookArray !== false){
-                    books = app.showBookList(bookArray);
+                    const books = app.showBookList(bookArray);
                     const divGroupElement = document.querySelector("#container");
-                    const h3ErrorElement = document.querySelector("#errorH3") ? divGroupElement.removeChild(document.querySelector("#errorH3")) : null;
+                    const h3ErrorElement = document.querySelector("#errorH3") ? divGroupElement.removeChild(document.querySelector("#errorH3")) : document.createElement("h3");
                     divGroupElement.appendChild(books);
                     
                     
 
                 } else {
                     const divGroupElement = document.querySelector("#container");
-                    const h3ErrorElement = document.createElement("h3");
+                    const h3ErrorElement = document.querySelector("#errorH3") ? divGroupElement.removeChild(document.querySelector("#errorH3")) : document.createElement("h3");
                     h3ErrorElement.setAttribute("id", "errorH3");
                     h3ErrorElement.textContent = "Aucun livre n'a été trouvé";
                     const books = document.querySelector("#results") ? divGroupElement.removeChild(document.querySelector("#results")) : null;
                     divGroupElement.appendChild(h3ErrorElement);
                 }
             })
-            // .catch(function () {
-            //     console.log("ERROR FETCH");
-            // });
+            .catch(function (e) {
+                console.log("ERROR FETCH" + e.message);
+            });
     },
 
     formatBookList: function (data) {

@@ -28,7 +28,6 @@ body .container {
   position: relative;
 }
 body #results, body #bookmarked {
-  width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -36,13 +35,13 @@ body #results, body #bookmarked {
 body .articleAndBookmark, body .pochlistBooks {
   flex-grow: 1;
   display: flex;
+  justify-content: center;
   padding: 20px;
   padding-bottom: 30px;
   border-radius: 5px;
   border: 1px solid #797979;
   margin: 10px;
   background: rgb(244, 245, 244);
-  position: relative;
 }
 body .articleAndBookmark h3:first-child, body .pochlistBooks h3:first-child {
   text-decoration: underline;
