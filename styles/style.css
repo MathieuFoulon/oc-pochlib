@@ -27,12 +27,14 @@ body .container {
   color: black;
   position: relative;
 }
-body #results, body #bookmarked {
+body #results,
+body #bookmarked {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 }
-body .articleAndBookmark, body .pochlistBooks {
+body .bookAndBookmark,
+body .pochlistBooks {
   flex-grow: 1;
   display: flex;
   justify-content: center;
@@ -43,26 +45,22 @@ body .articleAndBookmark, body .pochlistBooks {
   margin: 10px;
   background: rgb(244, 245, 244);
 }
-body .articleAndBookmark h3:first-child, body .pochlistBooks h3:first-child {
+body .bookAndBookmark h3:first-child,
+body .pochlistBooks h3:first-child {
   text-decoration: underline;
 }
-body .articleAndBookmark h3:nth-child(0n+2), body .pochlistBooks h3:nth-child(0n+2) {
+body .bookAndBookmark h3:nth-child(0n+2),
+body .pochlistBooks h3:nth-child(0n+2) {
   margin: 10px 0px;
   font-style: italic;
 }
-body .articleAndBookmark h3:nth-child(0n+3), body .pochlistBooks h3:nth-child(0n+3) {
+body .bookAndBookmark h3:nth-child(0n+3),
+body .pochlistBooks h3:nth-child(0n+3) {
   margin: 10px 0px;
 }
 body #content {
   width: 100%;
   margin-top: 30px;
-}
-body #divLogo #imgLogo img {
-  width: auto;
-  height: 200px;
-  display: flex;
-  margin: 0 auto;
-  border-radius: 5%;
 }
 body #myBooks {
   margin: 10px;
@@ -128,11 +126,15 @@ body #myBooks #globalDiv #container form .red {
 }
 body .fa-bookmark {
   color: #22b1a3;
-  cursor: pointer;
 }
 body .fa-trash {
   color: #f53526;
+}
+body .fas {
   cursor: pointer;
+}
+body .fas:hover {
+  scale: 1.05;
 }
 body img {
   height: 200px;
@@ -144,13 +146,13 @@ body h2 {
   text-align: center;
 }
 @media only screen and (min-width: 768px) and (max-width: 1440px) {
-  body .articleAndBookmark,
+  body .bookAndBookmark,
   body .pochlistBooks {
     width: 44%;
   }
 }
 @media only screen and (min-width: 1440px) {
-  body .articleAndBookmark,
+  body .bookAndBookmark,
   body .pochlistBooks {
     width: 30%;
   }

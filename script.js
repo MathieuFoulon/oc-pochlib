@@ -10,10 +10,10 @@ const app = {
         const divBeforeHrElement = document.createElement("section");
         app.hrElement.before(divBeforeHrElement);
         divBeforeHrElement.setAttribute("id", "globalDiv");
-        app.createBookmarkedDivContainerElement()
+        app.createBookmarkedSectionContainerElement()
         app.createAndPlaceAddBookButton();
-        
     },
+
     // creates the button to add book and make it appears on page
     createAndPlaceAddBookButton: function () {
         const addBookButtonElement = document.createElement("button");
@@ -24,58 +24,60 @@ const app = {
         addBookButtonElement.addEventListener("click", app.addBook);
     },
 
-    createBookmarkedDivContainerElement: function(){
-        const bookmarkedDivContainerElement = document.createElement("section")
-        bookmarkedDivContainerElement.classList.add("container");
-        bookmarkedDivContainerElement.setAttribute("id", "bookmarked")
+    // creates the section that will contains each book and bookmark
+    createBookmarkedSectionContainerElement: function(){
+        const bookmarkedSectionContainerElement = document.createElement("section")
+        bookmarkedSectionContainerElement.classList.add("container");
+        bookmarkedSectionContainerElement.setAttribute("id", "bookmarked")
 
-        app.contentElement.appendChild(bookmarkedDivContainerElement)
+        app.contentElement.appendChild(bookmarkedSectionContainerElement)
         app.getBookmarkedBooks()
     },
 
+    //retrieve books on session storage
     getBookmarkedBooks: function(){
         
-        const bookmarkedDivContainerElement = document.querySelector("#bookmarked");
-        if ( document.querySelectorAll(".pochListBooks")){
-            bookmarkedDivContainerElement.innerHTML = "";
+        const bookmarkedSectionContainerElement = document.querySelector("#bookmarked");
+        if ( !document.querySelectorAll(".pochListBooks")){
+            bookmarkedSectionContainerElement.innerHTML = "";
         }
         for (let i = 0; i < sessionStorage.length; i++) {
 
                 const value = sessionStorage.getItem(sessionStorage.key(i));
                 const bookId = sessionStorage.key(i);
 
+                // "IsThisFirstTime_Log_From_LiveServer" is the genereally the first entry in SesStorage, we will avoid it
                 if (bookId != "IsThisFirstTime_Log_From_LiveServer") {
-                    // const dummyDivElement = document.createElement("div");
-                    // dummyDivElement.innerHTML = value;
-                    // bookmarkedDivContainerElement.appendChild(dummyDivElement);
+                    bookmarkedSectionContainerElement.textContent = "";
                     const articleAndTrashContainerElement= document.createElement("article");
                     articleAndTrashContainerElement.classList.add("pochlistBooks")
                     articleAndTrashContainerElement.setAttribute("id", bookId);
                     articleAndTrashContainerElement.innerHTML = value;
-                    bookmarkedDivContainerElement.appendChild(articleAndTrashContainerElement);
+                    bookmarkedSectionContainerElement.appendChild(articleAndTrashContainerElement);
 
                     
-                    const bookmarkIconElement = bookmarkedDivContainerElement.querySelector(".fa-bookmark");
+                    const bookmarkIconElement = bookmarkedSectionContainerElement.querySelector(".fa-bookmark");
                     bookmarkIconElement.className = "fas fa-trash";
 
                     
                     bookmarkIconElement.addEventListener("click", function() {
                         sessionStorage.removeItem(bookId);
-                        console.log("click")
                         articleAndTrashContainerElement.parentElement.removeChild(articleAndTrashContainerElement);
                     })
+                } else {
+                    bookmarkedSectionContainerElement.textContent = "Aucun livre enregistré"
                 }
         }
     },
 
-    // makes the button to disappear and show form
+    // makes the button to disappear and shows form
     addBook: function (evt) {
-        console.log("bouton Ajouter un livre cliqué");
         const globalDiv = document.querySelector("#globalDiv");
         globalDiv.removeChild(evt.currentTarget)
         app.createForm();
     },
 
+    // creates the form, the search and cancel buttons
     createForm: function () {
         const globalDiv = document.querySelector("#globalDiv");
         const divGroupElement = document.createElement("div");
@@ -129,6 +131,7 @@ const app = {
         
     },
 
+    // remove form when cancel button is clicked
     removeForm: function(evt){
         const divGroupElement = document.querySelector("#container");
         const parentDiv = divGroupElement.parentElement;
@@ -136,10 +139,10 @@ const app = {
         app.createAndPlaceAddBookButton()
     },
 
+    // when form is submitted
     searchBook: function (evt) {
         evt.preventDefault();
         const resultDivElement = document.querySelector("#results") ? document.querySelector("#results").remove() : document.querySelector("#results");
-        console.log("form submitted");
         const formElement = evt.currentTarget;
         //important part : the encodeURIComponent will convert the "firstname lastname" to "firstname%20lastname", usefull to write the uri for request
         const titleInputValue = encodeURIComponent(
@@ -150,7 +153,7 @@ const app = {
         );
 
         let request;
-        // "https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes&key=yourAPIKey"
+        // "https://www.googleapis.com/books/v1/volumes?q=TITLE+inauthor:AUTHOR&key=yourAPIKey"
         if( titleInputValue !== "" && authorInputValue !== ""){
             request =
                 app.apiGoogleBooks +
@@ -177,14 +180,14 @@ const app = {
         }
         
         
-
+        // requesting API of google book
         fetch(request)
             .then(function (response) {
                 return response.json();
             })
             .then(function (data) {
-                console.log(data);
                 const bookArray = app.formatBookList(data);
+                // books found
                 if (bookArray !== false){
                     const books = app.showBookList(bookArray);
                     const divGroupElement = document.querySelector("#container");
@@ -193,6 +196,7 @@ const app = {
                     
                     
 
+                // no books found
                 } else {
                     const divGroupElement = document.querySelector("#container");
                     const h3ErrorElement = document.querySelector("#errorH3") ? divGroupElement.removeChild(document.querySelector("#errorH3")) : document.createElement("h3");
@@ -207,6 +211,7 @@ const app = {
             });
     },
 
+    // retrieves only informations about the book we wil use
     formatBookList: function (data) {
         if (data.items !== undefined) {
             let bookArray = [];
@@ -223,23 +228,22 @@ const app = {
                     : "./images/unavailable.png";
                 bookArray.push({id, title, author,description,image})
             });
-            console.log(bookArray);
             return bookArray;
         } else {
-            console.log("livre ou auteur introuvable");
             return false;
         }
     },
 
+    // templating the book info in a card and add bookmark button
     showBookList: function(bookArray){
         const resultDivElement = document.createElement("div");
         resultDivElement.setAttribute("id", "results")
         bookArray.forEach( book => {
 
-            //container for book info and bookmark
-            const divArticleAndBookmarkElement = document.createElement("div");
-            divArticleAndBookmarkElement.classList.add("articleAndBookmark");
-            divArticleAndBookmarkElement.setAttribute("id", book.id)
+            //container for both book info and bookmark
+            const bookAndBookmarkArticleElement = document.createElement("article");
+            bookAndBookmarkArticleElement.classList.add("bookAndBookmark");
+            bookAndBookmarkArticleElement.setAttribute("id", book.id)
 
             //container of book info
             const divArticleElement = document.createElement("article");
@@ -280,24 +284,23 @@ const app = {
             bookmarkDivElement.appendChild(bookmarkIconElement);
 
 
-            divArticleAndBookmarkElement.appendChild(divArticleElement);
-            divArticleAndBookmarkElement.appendChild(bookmarkDivElement);
+            bookAndBookmarkArticleElement.appendChild(divArticleElement);
+            bookAndBookmarkArticleElement.appendChild(bookmarkDivElement);
 
-            resultDivElement.appendChild(divArticleAndBookmarkElement);
+            resultDivElement.appendChild(bookAndBookmarkArticleElement);
 
 
         })
         return resultDivElement;
     },
 
+    // add book to Session Storage by cloning node
     addBookmarkedBookToPochliste: function(evt){
-        console.log("bookmark clické");
         const bookmarkIconElement = evt.target;
         
         const bookmarkIconAttributes = bookmarkIconElement.attributes;
         let bookId;
         Array.prototype.slice.call(bookmarkIconAttributes).forEach(function(item) {
-            console.log(item.name + ': '+ item.value);
             if (item.name === "book"){
                 bookId = item.value;
             }

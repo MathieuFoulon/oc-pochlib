@@ -4,15 +4,12 @@ $darkgrey: #797979;
 $pistachio: rgb(231, 240, 229);
 $lightgrey: rgb(244, 245, 244);
 
-
 $desktop: 1440px;
 $tablet: 768px;
 $mobile: 425px;
 
-
 body {
-    
-    font-family: 'Nunito Sans', sans-serif;
+    font-family: "Nunito Sans", sans-serif;
     font-weight: bolder;
 
     hr {
@@ -30,7 +27,7 @@ body {
         cursor: pointer;
     }
 
-    button:hover{
+    button:hover {
         scale: 1.05;
     }
 
@@ -44,13 +41,15 @@ body {
         position: relative;
     }
 
-    #results, #bookmarked {
+    #results,
+    #bookmarked {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
     }
 
-    .articleAndBookmark, .pochlistBooks {
+    .bookAndBookmark,
+    .pochlistBooks {
         flex-grow: 1;
         display: flex;
         justify-content: center;
@@ -62,36 +61,22 @@ body {
         background: $lightgrey;
 
         h3:first-child {
-            text-decoration: underline;     
+            text-decoration: underline;
         }
 
-        h3:nth-child(0n+2){
+        h3:nth-child(0n + 2) {
             margin: 10px 0px;
             font-style: italic;
         }
 
-        h3:nth-child(0n+3){
+        h3:nth-child(0n + 3) {
             margin: 10px 0px;
         }
     }
 
-    
     #content {
         width: 100%;
         margin-top: 30px;
-        
-    }
-
-    #divLogo {
-        #imgLogo {
-            img {
-                width: auto;
-                height: 200px;
-                display: flex;
-                margin: 0 auto;
-                border-radius: 5%;
-            }
-        }
     }
 
     #myBooks {
@@ -100,14 +85,14 @@ body {
             text-align: center;
             border: 1px solid black;
             padding: 20px;
-            
+
             box-shadow: 0px 7px 15px 0px #797979;
         }
         h2 {
             text-align: center;
             margin-top: 50px;
             margin-bottom: 20px;
-            text-decoration: underline;;
+            text-decoration: underline;
         }
         #globalDiv {
             display: flex;
@@ -149,7 +134,8 @@ body {
                             border: 1px $darkgrey solid;
                             border-radius: 2px;
                             margin: 2px;
-                            &:focus, &:hover {
+                            &:focus,
+                            &:hover {
                                 background-color: $lightgrey;
                             }
                         }
@@ -165,12 +151,17 @@ body {
 
     .fa-bookmark {
         color: $turquoise;
-        cursor: pointer;
     }
 
     .fa-trash {
         color: $red;
+    }
+
+    .fas {
         cursor: pointer;
+        &:hover {
+            scale: 1.05;
+        }
     }
 
     img {
@@ -185,17 +176,16 @@ body {
     }
 
     @media only screen and (min-width: $tablet) and (max-width: $desktop) {
-        .articleAndBookmark,
+        .bookAndBookmark,
         .pochlistBooks {
             width: 44%;
         }
     }
 
     @media only screen and (min-width: $desktop) {
-        .articleAndBookmark,
+        .bookAndBookmark,
         .pochlistBooks {
             width: 30%;
         }
     }
 }
-
